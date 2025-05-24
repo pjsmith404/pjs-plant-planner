@@ -1,6 +1,6 @@
 from tkinter import Tk, BOTH, Canvas
 
-class Window():
+class Window:
     def __init__(self, width, height):
         self.__root = Tk()
         self.__root.title("PJ's Plant Planner")
@@ -24,12 +24,12 @@ class Window():
     def draw_rectangle(self, rectangle, outline_colour="black", fill_colour="white"):
         rectangle.draw(self.__canvas, outline_colour, fill_colour)
 
-class Point():
+class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-class Rectangle():
+class Rectangle:
     def __init__(self, top_left, bottom_right):
         self.top_left = top_left
         self.bottom_right = bottom_right
@@ -45,3 +45,11 @@ class Rectangle():
             width=2
         )
 
+class Icon:
+    def __init__(self, win):
+        self._win = win
+        self._rectangle = None
+
+    def draw(self, rectangle):
+        self._rectangle = rectangle
+        self._win.draw_rectangle(self._rectangle)
