@@ -21,3 +21,27 @@ class Window():
     def close(self):
         self.__running = False
 
+    def draw_rectangle(self, rectangle, outline_colour="black", fill_colour="white"):
+        rectangle.draw(self.__canvas, outline_colour, fill_colour)
+
+class Point():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+class Rectangle():
+    def __init__(self, top_left, bottom_right):
+        self.top_left = top_left
+        self.bottom_right = bottom_right
+
+    def draw(self, canvas, outline_colour="black", fill_colour="white"):
+        canvas.create_rectangle(
+            self.top_left.x,
+            self.top_left.y,
+            self.bottom_right.x,
+            self.bottom_right.y,
+            outline=outline_colour,
+            fill=fill_colour,
+            width=2
+        )
+
