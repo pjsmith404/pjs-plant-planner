@@ -53,3 +53,4 @@ class Icon:
     def draw(self, rectangle):
         self._rectangle = rectangle
         self._win.draw_rectangle(self._rectangle)
+

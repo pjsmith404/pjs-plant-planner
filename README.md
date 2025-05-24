@@ -12,3 +12,7 @@ An app to help keep track of what I've planted where and when.
     - Any care required
     - I'm sure I'll think of other stuff as I go
 
+# Time Worked
+
+3 hrs
+

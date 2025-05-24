@@ -25,7 +25,6 @@ def main():
     plant2 = Plant("Test", "2025-01-01", icon2, win)
     plant2._draw_plant(rectangle2)
 
-
     win.wait_for_close()
 
 if __name__ == "__main__":
