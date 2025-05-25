@@ -4,13 +4,14 @@ An app to help keep track of what I've planted where and when.
 
 # To Do
 
-- Draw a map of the garden
-- Overlay plants on the map
-- Attach details to the plants that can be displayed when clicked on
-    - Name
-    - When planted
-    - Any care required
-    - I'm sure I'll think of other stuff as I go
+- Map of the garden
+    - Core layout
+    - Track plants added to the map
+- Plants
+    - Have details attached (eg name, when planted, etc)
+    - Drag plant icons around map
+    - Click on a plant and get information about it
+    - Distinct icons based on type of plant
 
 # Time Worked
 
