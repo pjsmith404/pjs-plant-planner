@@ -15,5 +15,5 @@ An app to help keep track of what I've planted where and when.
 
 # Time Worked
 
-3 hrs
+5 hrs
 
