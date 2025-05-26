@@ -33,7 +33,7 @@ class Plant:
     def __init__(self, name, planted, canvas):
         self.name = name
         self.planted = planted
-        self._widget = canvas.create_rectangle(
+        self.widget = canvas.create_rectangle(
             10,
             10,
             20,
@@ -42,4 +42,23 @@ class Plant:
             fill="green",
             width=2
         )
+        self._canvas = canvas
+        self._x_offset = 0
+        self._y_offset = 0
+
+        canvas.tag_bind(self.widget, "<Button-1>", self.drag_start)
+        canvas.tag_bind(self.widget, "<B1-Motion>", self.drag_motion)
+    
+    def drag_start(self, event):
+        self._x_offset = event.x
+        self._y_offset = event.y
+
+    def drag_motion(self, event):
+        print(event)
+        print(self._x_offset, self._y_offset)
+        x = event.x - self._x_offset
+        y = event.y - self._y_offset
+        self._canvas.move("current", x, y)
+        self._x_offset = event.x
+        self._y_offset = event.y
 
