@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 class App(tk.Tk):
     def __init__(self):
@@ -48,6 +48,7 @@ class Plant:
 
         canvas.tag_bind(self.widget, "<Button-1>", self.drag_start)
         canvas.tag_bind(self.widget, "<B1-Motion>", self.drag_motion)
+        canvas.tag_bind(self.widget, "<Button-3>", self.get_info)
     
     def drag_start(self, event):
         self._x_offset = event.x
@@ -62,3 +63,5 @@ class Plant:
         self._x_offset = event.x
         self._y_offset = event.y
 
+    def get_info(self, event):
+        messagebox.showinfo(message=f"Plant: {self.name}\nPlanted: {self.planted}")
