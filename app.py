@@ -24,10 +24,28 @@ class MapFrame(ttk.Frame):
         self.pack(side="right")
         self._canvas = tk.Canvas(self, bg="white", width=300, height=300)
         self._canvas.pack()
-        self._plants = []
 
     def add_plant(self):
-        self._plants.append(Plant("Test", "2025-01-01", self._canvas))
+        dlg = tk.Toplevel()
+        
+        ttk.Label(dlg, text="Plant Name:").grid()
+        name = ttk.Entry(dlg, textvariable="name")
+        name.grid()
+
+        ttk.Label(dlg, text="Planted:").grid()
+        planted = ttk.Entry(dlg, textvariable="planted")
+        planted.grid()
+        
+        ttk.Button(dlg, text="Done", command=lambda: self.dismiss_dlg(dlg)).grid()
+        dlg.wait_visibility()
+        dlg.grab_set()
+        dlg.wait_window()
+        
+        Plant(name.get(), planted.get(), self._canvas)
+
+    def dismiss_dlg(self, dlg):
+        dlg.grab_release()
+        dlg.destroy()
 
 class Plant:
     def __init__(self, name, planted, canvas):
@@ -55,13 +73,11 @@ class Plant:
         self._y_offset = event.y
 
     def drag_motion(self, event):
-        print(event)
-        print(self._x_offset, self._y_offset)
         x = event.x - self._x_offset
         y = event.y - self._y_offset
-        self._canvas.move("current", x, y)
         self._x_offset = event.x
         self._y_offset = event.y
+        self._canvas.move("current", x, y)
 
     def get_info(self, event):
         messagebox.showinfo(message=f"Plant: {self.name}\nPlanted: {self.planted}")
