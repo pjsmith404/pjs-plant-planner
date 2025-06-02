@@ -22,7 +22,7 @@ class MapFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.pack(side="right")
-        self._canvas = tk.Canvas(self, bg="white", width=300, height=300)
+        self._canvas = MapCanvas(self, bg="white", width=300, height=300)
         self._canvas.pack()
 
     def add_plant(self):
@@ -51,14 +51,15 @@ class Plant:
 
         self.plant_dlg()
 
-        canvas.tag_bind(self.widget, "<Button-1>", self.drag_start)
-        canvas.tag_bind(self.widget, "<B1-Motion>", self.drag_motion)
-        canvas.tag_bind(self.widget, "<Button-3>", self.plant_dlg)
+        self._canvas.tag_bind(self.widget, "<Button-1>", self.drag_start)
+        self._canvas.tag_bind(self.widget, "<B1-Motion>", self.drag_motion)
+        self._canvas.tag_bind(self.widget, "<ButtonRelease-1>", self.drag_stop)
+        self._canvas.tag_bind(self.widget, "<Button-3>", self.plant_dlg)
 
     def plant_dlg(self, *args):
         dlg = tk.Toplevel()
 
-        ttk.Label(dlg, text="Plant Name:").grid()
+        ttk.Label(dlg, text="Name:").grid()
         name_entry = ttk.Entry(dlg, textvariable=self.name)
         name_entry.grid()
 
@@ -76,6 +77,7 @@ class Plant:
         dlg.destroy()
 
     def drag_start(self, event):
+        self._canvas.disable_draw()
         self._x_offset = event.x
         self._y_offset = event.y
 
@@ -85,4 +87,31 @@ class Plant:
         self._x_offset = event.x
         self._y_offset = event.y
         self._canvas.move("current", x, y)
+
+    def drag_stop(self, event):
+        self._canvas.enable_draw()
+
+class MapCanvas(tk.Canvas):
+    def __init__(self, parent, **kwargs):
+        super().__init__(parent, **kwargs)
+        self._last_x = 0
+        self._last_y = 0
+
+        self.enable_draw()
+
+    def save_posn(self, event):
+        self._last_x, self._last_y = event.x, event.y
+
+    def add_line(self, event):
+        line = self.create_line(self._last_x, self._last_y, event.x, event.y, width=2, smooth="bezier")
+        self.lower(line)
+        self.save_posn(event)
+
+    def disable_draw(self):
+        self.unbind("<Button-1>")
+        self.unbind("<B1-Motion>")
+
+    def enable_draw(self):
+        self.bind("<Button-1>", self.save_posn)
+        self.bind("<B1-Motion>", self.add_line)
 
