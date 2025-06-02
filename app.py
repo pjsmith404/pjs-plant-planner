@@ -26,31 +26,16 @@ class MapFrame(ttk.Frame):
         self._canvas.pack()
 
     def add_plant(self):
-        dlg = tk.Toplevel()
-        
-        ttk.Label(dlg, text="Plant Name:").grid()
-        name = ttk.Entry(dlg, textvariable="name")
-        name.grid()
-
-        ttk.Label(dlg, text="Planted:").grid()
-        planted = ttk.Entry(dlg, textvariable="planted")
-        planted.grid()
-        
-        ttk.Button(dlg, text="Done", command=lambda: self.dismiss_dlg(dlg)).grid()
-        dlg.wait_visibility()
-        dlg.grab_set()
-        dlg.wait_window()
-        
-        Plant(name.get(), planted.get(), self._canvas)
+        Plant(self._canvas)
 
     def dismiss_dlg(self, dlg):
         dlg.grab_release()
         dlg.destroy()
 
 class Plant:
-    def __init__(self, name, planted, canvas):
-        self.name = name
-        self.planted = planted
+    def __init__(self, canvas):
+        self.name = tk.StringVar()
+        self.planted = tk.StringVar()
         self.widget = canvas.create_rectangle(
             10,
             10,
@@ -64,10 +49,32 @@ class Plant:
         self._x_offset = 0
         self._y_offset = 0
 
+        self.plant_dlg()
+
         canvas.tag_bind(self.widget, "<Button-1>", self.drag_start)
         canvas.tag_bind(self.widget, "<B1-Motion>", self.drag_motion)
-        canvas.tag_bind(self.widget, "<Button-3>", self.get_info)
-    
+        canvas.tag_bind(self.widget, "<Button-3>", self.plant_dlg)
+
+    def plant_dlg(self, *args):
+        dlg = tk.Toplevel()
+
+        ttk.Label(dlg, text="Plant Name:").grid()
+        name_entry = ttk.Entry(dlg, textvariable=self.name)
+        name_entry.grid()
+
+        ttk.Label(dlg, text="Planted:").grid()
+        planted_entry = ttk.Entry(dlg, textvariable=self.planted)
+        planted_entry.grid()
+
+        ttk.Button(dlg, text="Done", command=lambda: self.dismiss_dlg(dlg)).grid()
+        dlg.wait_visibility()
+        dlg.grab_set()
+        dlg.wait_window()
+
+    def dismiss_dlg(self, dlg):
+        dlg.grab_release()
+        dlg.destroy()
+
     def drag_start(self, event):
         self._x_offset = event.x
         self._y_offset = event.y
@@ -79,5 +86,3 @@ class Plant:
         self._y_offset = event.y
         self._canvas.move("current", x, y)
 
-    def get_info(self, event):
-        messagebox.showinfo(message=f"Plant: {self.name}\nPlanted: {self.planted}")
