@@ -4,14 +4,12 @@ An app to help keep track of what I've planted where and when.
 
 # To Do
 
-- Map of the garden
-    - Core layout
-    - Track plants added to the map
-- Plants
-    - Have details attached (eg name, when planted, etc)
-    - Drag plant icons around map
-    - Click on a plant and get information about it
-    - Distinct icons based on type of plant
+- Add the ability to save and load maps.
+- Make some nicer icons for plants. I might turn this into a drop down of plant types to
+choose when adding.
+- Colour plant icons based on whether they are planted or not.
+- Add some validation of the date so the planted time actually is a date.
+- Add drawing of shapes and changing up colours so the map is more customisable.
 
 # Time Worked
 
