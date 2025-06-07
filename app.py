@@ -36,15 +36,9 @@ class Plant:
     def __init__(self, canvas):
         self.name = tk.StringVar()
         self.planted = tk.StringVar()
-        self.widget = canvas.create_rectangle(
-            10,
-            10,
-            20,
-            20,
-            outline="black",
-            fill="green",
-            width=2
-        )
+        self._tree_icon = tk.PhotoImage(file='icons/tree_planted.gif')
+        self._tree_icon = self._tree_icon.subsample(4)
+        self.widget = canvas.create_image(10, 10, image=self._tree_icon, anchor="nw")
         self._canvas = canvas
         self._x_offset = 0
         self._y_offset = 0
@@ -68,6 +62,7 @@ class Plant:
         planted_entry.grid()
 
         ttk.Button(dlg, text="Done", command=lambda: self.dismiss_dlg(dlg)).grid()
+
         dlg.wait_visibility()
         dlg.grab_set()
         dlg.wait_window()
