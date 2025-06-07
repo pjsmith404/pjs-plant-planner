@@ -7,7 +7,49 @@ class App(tk.Tk):
 
         self.title("PJ's Plant Planner")
 
-        self.control = ControlFrame(self)
+        self.option_add('*tearOff', False)
+
+        menubar = AppMenu(self)
+        self['menu'] = menubar
+
+class AppMenu(tk.Menu):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self._parent = parent
+        self._map = None
+
+        menu_file = tk.Menu(self)
+        menu_plants = tk.Menu(self)
+        self.add_cascade(menu=menu_file, label="File")
+        self.add_cascade(menu=menu_plants, label="Plants")
+
+        menu_file.add_command(label="New", command=self.new_file)
+        menu_file.add_command(label="Open...", command=self.open_file)
+        menu_file.add_command(label="Close", command=self.close_file)
+        menu_file.add_command(label="Save", command=self.save_file)
+
+        menu_plants.add_command(label="Add Plant", command=self.add_plant)
+
+    def new_file(self):
+        # TODO: Would this need to close the existing first?
+        self._map = MapFrame(self._parent)
+
+    def open_file(self):
+        # TODO: Load canvas from file. Is this even possible?
+        pass
+
+    def save_file(self):
+        # TODO: Write this to a file
+        print(self._map.get_canvas_state())
+
+    def close_file(self):
+        # TODO: Wipe the canvas
+        pass
+
+    def add_plant(self):
+        if self._map:
+            self._map.add_plant()
 
 class ControlFrame(ttk.Frame):
     def __init__(self, parent):
@@ -31,6 +73,9 @@ class MapFrame(ttk.Frame):
     def dismiss_dlg(self, dlg):
         dlg.grab_release()
         dlg.destroy()
+
+    def get_canvas_state(self):
+        return self._canvas.postscript()
 
 class Plant:
     def __init__(self, canvas):
