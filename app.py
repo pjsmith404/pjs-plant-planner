@@ -12,7 +12,7 @@ class App(tk.Tk):
 class ControlFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
-        self.pack(side="left")
+        self.pack(side="left", fill=tk.BOTH, expand=True)
         self._map = MapFrame(self)
 
         self.okay_button = ttk.Button(self, text="Add Plant", command=self._map.add_plant)
@@ -21,9 +21,9 @@ class ControlFrame(ttk.Frame):
 class MapFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
-        self.pack(side="right")
-        self._canvas = MapCanvas(self, bg="white", width=300, height=300)
-        self._canvas.pack()
+        self.pack(side="right", fill=tk.BOTH, expand=True)
+        self._canvas = MapCanvas(self, bg="white")
+        self._canvas.pack(fill=tk.BOTH, expand=True)
 
     def add_plant(self):
         Plant(self._canvas)
@@ -103,7 +103,7 @@ class MapCanvas(tk.Canvas):
         self._last_x, self._last_y = event.x, event.y
 
     def add_line(self, event):
-        line = self.create_line(self._last_x, self._last_y, event.x, event.y, width=2, smooth="bezier")
+        line = self.create_line(self._last_x, self._last_y, event.x, event.y, width=2)
         self.lower(line)
         self.save_posn(event)
 
