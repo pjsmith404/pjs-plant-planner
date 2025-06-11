@@ -1,3 +1,4 @@
+import json
 import tkinter as tk
 from tkinter import ttk, messagebox
 
@@ -37,12 +38,18 @@ class AppMenu(tk.Menu):
         self._map = MapFrame(self._parent)
 
     def open_file(self):
-        # TODO: Load canvas from file. Is this even possible?
-        pass
+        self.new_file()
+        with open("./plantmap.json", "r") as f:
+            plant_data = json.loads(f.read())
+            print(plant_data)
+            for plant in plant_data.values():
+                self._map._canvas.add_plant(plant.get("name"), plant.get("planted"), plant.get("x"), plant.get("y"))
 
     def save_file(self):
-        # TODO: Write this to a file
         print(self._map.get_canvas_state())
+        if self._map:
+            with open("./plantmap.json", "w") as f:
+                f.write(json.dumps(self._map.get_canvas_state()))
 
     def close_file(self):
         # TODO: Wipe the canvas
@@ -69,27 +76,28 @@ class MapFrame(ttk.Frame):
         self._canvas.pack(fill=tk.BOTH, expand=True)
 
     def add_plant(self):
-        Plant(self._canvas)
-
-    def dismiss_dlg(self, dlg):
-        dlg.grab_release()
-        dlg.destroy()
+        self._canvas.add_plant()
 
     def get_canvas_state(self):
-        return self._canvas.postscript()
+        return self._canvas.get_canvas_state()
 
 class Plant:
-    def __init__(self, canvas):
+    def __init__(self, canvas, name=None, planted=None, x=10, y=10):
         self.name = tk.StringVar()
+        if name:
+            self.name.set(name)
         self.planted = tk.StringVar()
+        if planted:
+            self.planted.set(planted)
         self._tree_icon = tk.PhotoImage(file='icons/tree_planted.gif')
         self._tree_icon = self._tree_icon.subsample(4)
-        self.widget = canvas.create_image(10, 10, image=self._tree_icon, anchor="nw")
+        self.widget = canvas.create_image(x, y, image=self._tree_icon, anchor="nw")
         self._canvas = canvas
         self._x_offset = 0
         self._y_offset = 0
 
-        self.plant_dlg()
+        if not self.name.get():
+            self.plant_dlg()
 
         self._canvas.tag_bind(self.widget, "<Button-1>", self.drag_start)
         self._canvas.tag_bind(self.widget, "<B1-Motion>", self.drag_motion)
@@ -116,6 +124,7 @@ class Plant:
     def dismiss_dlg(self, dlg):
         dlg.grab_release()
         dlg.destroy()
+        self._canvas.update_plant_state(self)
 
     def drag_start(self, event):
         self._canvas.disable_draw()
@@ -131,12 +140,15 @@ class Plant:
 
     def drag_stop(self, event):
         self._canvas.enable_draw()
+        self._canvas.update_plant_state(self)
 
 class MapCanvas(tk.Canvas):
     def __init__(self, parent, **kwargs):
         super().__init__(parent, **kwargs)
         self._last_x = 0
         self._last_y = 0
+        # Track the state of widgets on the Canvas
+        self._state = {}
 
         self.enable_draw()
 
@@ -155,4 +167,21 @@ class MapCanvas(tk.Canvas):
     def enable_draw(self):
         self.bind("<Button-1>", self.save_posn)
         self.bind("<B1-Motion>", self.add_line)
+
+    def add_plant(self, name=None, planted=None, x=0, y=0):
+        plant = Plant(self, name, planted, x, y)
+        self.update_plant_state(plant)
+
+    def update_plant_state(self, plant):
+        x, y = self.coords(plant.widget)
+
+        self._state[plant.widget] = {
+            "name": plant.name.get(),
+            "planted": plant.planted.get(),
+            "x": x,
+            "y": y
+        }
+
+    def get_canvas_state(self):
+        return self._state
 
