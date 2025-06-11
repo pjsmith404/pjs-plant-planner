@@ -32,7 +32,8 @@ class AppMenu(tk.Menu):
         menu_plants.add_command(label="Add Plant", command=self.add_plant)
 
     def new_file(self):
-        # TODO: Would this need to close the existing first?
+        if self._map:
+            self._map.destroy()
         self._map = MapFrame(self._parent)
 
     def open_file(self):
