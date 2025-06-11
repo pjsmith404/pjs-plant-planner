@@ -2,6 +2,12 @@
 
 An app to help keep track of what I've planted where and when.
 
+# Saving and Loading
+
+This is working now, but only limited to the plant widgets. I decided I didn't want to deal with
+tracking everything other than plants, so I'm going to abandon the drawing component
+and just add support for importing in images created elsewhere.
+
 # Plant Icons
 
 I've got a basic icon, but it's nothing special. This should really be something that
@@ -10,14 +16,14 @@ handy visual clue for what plants are or aren't active.
 
 # To Do
 
-- Add the ability to save and load maps.
+- Add the ability to import background images to layout plants on.
+- Ditch the MapFrame class and just create a frame with the MapCanvas class at the top level.
 - (Sorta) Make some nicer icons for plants. I might turn this into a drop down of plant types to
 choose when adding.
 - Colour plant icons based on whether they are planted or not.
 - Add some validation of the date so the planted time actually is a date.
-- Add drawing of shapes and changing up colours so the map is more customisable.
 
 # Time Worked
 
-10 hrs
+11 hrs
 
