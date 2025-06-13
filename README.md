@@ -17,7 +17,6 @@ handy visual clue for what plants are or aren't active.
 # To Do
 
 - Add the ability to import background images to layout plants on.
-- Ditch the MapFrame class and just create a frame with the MapCanvas class at the top level.
 - (Sorta) Make some nicer icons for plants. I might turn this into a drop down of plant types to
 choose when adding.
 - Colour plant icons based on whether they are planted or not.
@@ -25,5 +24,5 @@ choose when adding.
 
 # Time Worked
 
-11 hrs
+13 hrs
 
