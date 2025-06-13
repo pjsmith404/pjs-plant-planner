@@ -43,7 +43,12 @@ class AppMenu(tk.Menu):
             plant_data = json.loads(f.read())
             print(plant_data)
             for plant in plant_data.values():
-                self._map._canvas.add_plant(plant.get("name"), plant.get("planted"), plant.get("x"), plant.get("y"))
+                self._map._canvas.add_plant(
+                    plant.get("name"),
+                    plant.get("planted"),
+                    plant.get("x"),
+                    plant.get("y")
+                )
 
     def save_file(self):
         print(self._map.get_canvas_state())
