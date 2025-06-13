@@ -64,15 +64,6 @@ class AppMenu(tk.Menu):
         if self._map:
             self._map.add_plant()
 
-class ControlFrame(ttk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.pack(side="left", fill=tk.BOTH, expand=True)
-        self._map = MapFrame(self)
-
-        self.okay_button = ttk.Button(self, text="Add Plant", command=self._map.add_plant)
-        self.okay_button.pack()
-
 class MapFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
