@@ -35,7 +35,7 @@ class AppMenu(tk.Menu):
     def new_file(self):
         if self._map:
             self._map.destroy()
-        self._map = MapFrame(self._parent)
+        self._map = Map(self._parent)
 
     def open_file(self):
         self.new_file()
@@ -43,7 +43,7 @@ class AppMenu(tk.Menu):
             plant_data = json.loads(f.read())
             print(plant_data)
             for plant in plant_data.values():
-                self._map._canvas.add_plant(
+                self._map.add_plant(
                     plant.get("name"),
                     plant.get("planted"),
                     plant.get("x"),
@@ -58,47 +58,73 @@ class AppMenu(tk.Menu):
 
     def close_file(self):
         # TODO: Wipe the canvas
-        pass
+        if self._map:
+            self._map.destroy()
 
     def add_plant(self):
         if self._map:
             self._map.add_plant()
 
-class MapFrame(ttk.Frame):
+class Map:
     def __init__(self, parent):
-        super().__init__(parent)
-        self.pack(side="right", fill=tk.BOTH, expand=True)
-        self._canvas = MapCanvas(self, bg="white")
+        self._frame = ttk.Frame(parent)
+        self._frame.pack(fill=tk.BOTH, expand=True)
+
+        self._canvas = tk.Canvas(self._frame, bg="white")
         self._canvas.pack(fill=tk.BOTH, expand=True)
 
-    def add_plant(self):
-        self._canvas.add_plant()
+        self._tree_icon = tk.PhotoImage(file='icons/tree_planted.gif')
+        self._tree_icon = self._tree_icon.subsample(4)
+
+        self._state = {}
+
+    def destroy(self):
+        self._frame.destroy()
+
+    def move(self, x, y):
+        self._canvas.move("current", x, y)
+
+    def tag_bind(self, *args):
+        self._canvas.tag_bind(*args)
+
+    def add_plant(self, name=None, planted=None, x=10, y=10):
+        widget = self._canvas.create_image(x, y, image=self._tree_icon, anchor="nw")
+        plant = Plant(self, widget, name, planted)
+        self.update_plant_state(plant)
+
+    def update_plant_state(self, plant):
+        x, y = self._canvas.coords(plant.widget)
+
+        self._state[plant.widget] = {
+            "name": plant.name.get(),
+            "planted": plant.planted.get(),
+            "x": x,
+            "y": y
+        }
 
     def get_canvas_state(self):
-        return self._canvas.get_canvas_state()
+        return self._state
 
 class Plant:
-    def __init__(self, canvas, name=None, planted=None, x=10, y=10):
+    def __init__(self, map_class, widget, name=None, planted=None):
         self.name = tk.StringVar()
         if name:
             self.name.set(name)
         self.planted = tk.StringVar()
         if planted:
             self.planted.set(planted)
-        self._tree_icon = tk.PhotoImage(file='icons/tree_planted.gif')
-        self._tree_icon = self._tree_icon.subsample(4)
-        self.widget = canvas.create_image(x, y, image=self._tree_icon, anchor="nw")
-        self._canvas = canvas
+        self.widget = widget
+        self._map = map_class
         self._x_offset = 0
         self._y_offset = 0
 
         if not self.name.get():
             self.plant_dlg()
 
-        self._canvas.tag_bind(self.widget, "<Button-1>", self.drag_start)
-        self._canvas.tag_bind(self.widget, "<B1-Motion>", self.drag_motion)
-        self._canvas.tag_bind(self.widget, "<ButtonRelease-1>", self.drag_stop)
-        self._canvas.tag_bind(self.widget, "<Button-3>", self.plant_dlg)
+        self._map.tag_bind(self.widget, "<Button-1>", self.drag_start)
+        self._map.tag_bind(self.widget, "<B1-Motion>", self.drag_motion)
+        self._map.tag_bind(self.widget, "<ButtonRelease-1>", self.drag_stop)
+        self._map.tag_bind(self.widget, "<Button-3>", self.plant_dlg)
 
     def plant_dlg(self, *args):
         dlg = tk.Toplevel()
@@ -120,10 +146,9 @@ class Plant:
     def dismiss_dlg(self, dlg):
         dlg.grab_release()
         dlg.destroy()
-        self._canvas.update_plant_state(self)
+        self._map.update_plant_state(self)
 
     def drag_start(self, event):
-        self._canvas.disable_draw()
         self._x_offset = event.x
         self._y_offset = event.y
 
@@ -132,52 +157,8 @@ class Plant:
         y = event.y - self._y_offset
         self._x_offset = event.x
         self._y_offset = event.y
-        self._canvas.move("current", x, y)
+        self._map.move(x, y)
 
     def drag_stop(self, event):
-        self._canvas.enable_draw()
-        self._canvas.update_plant_state(self)
-
-class MapCanvas(tk.Canvas):
-    def __init__(self, parent, **kwargs):
-        super().__init__(parent, **kwargs)
-        self._last_x = 0
-        self._last_y = 0
-        # Track the state of widgets on the Canvas
-        self._state = {}
-
-        self.enable_draw()
-
-    def save_posn(self, event):
-        self._last_x, self._last_y = event.x, event.y
-
-    def add_line(self, event):
-        line = self.create_line(self._last_x, self._last_y, event.x, event.y, width=2)
-        self.lower(line)
-        self.save_posn(event)
-
-    def disable_draw(self):
-        self.unbind("<Button-1>")
-        self.unbind("<B1-Motion>")
-
-    def enable_draw(self):
-        self.bind("<Button-1>", self.save_posn)
-        self.bind("<B1-Motion>", self.add_line)
-
-    def add_plant(self, name=None, planted=None, x=0, y=0):
-        plant = Plant(self, name, planted, x, y)
-        self.update_plant_state(plant)
-
-    def update_plant_state(self, plant):
-        x, y = self.coords(plant.widget)
-
-        self._state[plant.widget] = {
-            "name": plant.name.get(),
-            "planted": plant.planted.get(),
-            "x": x,
-            "y": y
-        }
-
-    def get_canvas_state(self):
-        return self._state
+        self._map.update_plant_state(self)
 
