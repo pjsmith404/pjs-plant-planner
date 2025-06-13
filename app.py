@@ -1,6 +1,6 @@
 import json
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 
 class App(tk.Tk):
     def __init__(self):
@@ -20,15 +20,21 @@ class AppMenu(tk.Menu):
         self._parent = parent
         self._map = None
 
+        self._save_file = None
+
         menu_file = tk.Menu(self)
         menu_plants = tk.Menu(self)
         self.add_cascade(menu=menu_file, label="File")
         self.add_cascade(menu=menu_plants, label="Plants")
 
-        menu_file.add_command(label="New", command=self.new_file)
+        menu_file.add_command(label="New File", command=self.new_file)
         menu_file.add_command(label="Open...", command=self.open_file)
-        menu_file.add_command(label="Close", command=self.close_file)
+        menu_file.add_separator()
         menu_file.add_command(label="Save", command=self.save_file)
+        menu_file.add_command(label="Save As...", command=self.save_file_prompt)
+        menu_file.add_separator()
+        menu_file.add_command(label="Close", command=self.close_file)
+        menu_file.add_command(label="Exit", command=self._parent.destroy)
 
         menu_plants.add_command(label="Add Plant", command=self.add_plant)
 
@@ -39,7 +45,9 @@ class AppMenu(tk.Menu):
 
     def open_file(self):
         self.new_file()
-        with open("./plantmap.json", "r") as f:
+        filename = filedialog.askopenfilename()
+        self._save_file = filename
+        with open(filename, "r") as f:
             plant_data = json.loads(f.read())
             print(plant_data)
             for plant in plant_data.values():
@@ -51,15 +59,23 @@ class AppMenu(tk.Menu):
                 )
 
     def save_file(self):
-        print(self._map.get_canvas_state())
+        if not self._save_file:
+            self.save_file_prompt()
         if self._map:
-            with open("./plantmap.json", "w") as f:
+            print(self._map.get_canvas_state())
+            with open(self._save_file, "w") as f:
                 f.write(json.dumps(self._map.get_canvas_state()))
 
+    def save_file_prompt(self):
+        if self._map:
+            filename = filedialog.asksaveasfilename()
+            self._save_file = filename
+            self.save_file()
+
     def close_file(self):
-        # TODO: Wipe the canvas
         if self._map:
             self._map.destroy()
+            self._save_file = None
 
     def add_plant(self):
         if self._map:
