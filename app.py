@@ -23,9 +23,7 @@ class AppMenu(tk.Menu):
         self._save_file = None
 
         menu_file = tk.Menu(self)
-        menu_plants = tk.Menu(self)
         self.add_cascade(menu=menu_file, label="File")
-        self.add_cascade(menu=menu_plants, label="Plants")
 
         menu_file.add_command(label="New File", command=self.new_file)
         menu_file.add_command(label="Open...", command=self.open_file)
@@ -36,7 +34,13 @@ class AppMenu(tk.Menu):
         menu_file.add_command(label="Close", command=self.close_file)
         menu_file.add_command(label="Exit", command=self._parent.destroy)
 
+        menu_plants = tk.Menu(self)
+        self.add_cascade(menu=menu_plants, label="Plants")
         menu_plants.add_command(label="Add Plant", command=self.add_plant)
+
+        menu_map = tk.Menu(self)
+        self.add_cascade(menu=menu_map, label="Map")
+        menu_map.add_command(label="Import Background...", command=self.import_background)
 
     def new_file(self):
         if self._map:
@@ -49,7 +53,11 @@ class AppMenu(tk.Menu):
         self._save_file = filename
         with open(filename, "r") as f:
             plant_data = json.loads(f.read())
-            print(plant_data)
+
+            background_data = plant_data.pop("background", None)
+            if background_data:
+                self._map.load_background(background_data)
+
             for plant in plant_data.values():
                 self._map.add_plant(
                     plant.get("name"),
@@ -62,7 +70,6 @@ class AppMenu(tk.Menu):
         if not self._save_file:
             self.save_file_prompt()
         if self._map:
-            print(self._map.get_canvas_state())
             with open(self._save_file, "w") as f:
                 f.write(json.dumps(self._map.get_canvas_state()))
 
@@ -81,17 +88,24 @@ class AppMenu(tk.Menu):
         if self._map:
             self._map.add_plant()
 
+    def import_background(self):
+        filename = filedialog.askopenfilename()
+        if self._map:
+            self._map.set_background(filename)
+        else:
+            self.new_file()
+            self._map.set_background(filename)
+
 class MapCanvas(tk.Canvas):
     def __init__(self, parent):
         super().__init__(parent, bg="white")
-        #self._frame = ttk.Frame(parent)
-        #self._frame.pack(fill=tk.BOTH, expand=True)
 
-        #self._canvas = tk.Canvas(parent, bg="white")
         self.pack(fill=tk.BOTH, expand=True)
 
         self._tree_icon = tk.PhotoImage(file='icons/tree_planted.gif')
         self._tree_icon = self._tree_icon.subsample(4)
+
+        self._background = None
 
         self._state = {}
 
@@ -112,6 +126,23 @@ class MapCanvas(tk.Canvas):
 
     def get_canvas_state(self):
         return self._state
+
+    def set_background(self, filename):
+        self._background = tk.PhotoImage(file=filename)
+        self.config(width=self._background.width(), height=self._background.height())
+        self.create_image(0, 0, image=self._background, anchor="nw")
+        self.pack(fill=tk.NONE, expand=False)
+
+        self._state["background"] = self._background.data()
+
+    def load_background(self, image_data):
+        self._background = tk.PhotoImage()
+        self._background.put(image_data)
+        self.config(width=self._background.width(), height=self._background.height())
+        self.create_image(0, 0, image=self._background, anchor="nw")
+        self.pack(fill=tk.NONE, expand=False)
+
+        self._state["background"] = self._background.data()
 
 class Plant:
     def __init__(self, canvas, widget, name=None, planted=None):

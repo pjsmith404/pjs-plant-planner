@@ -8,6 +8,21 @@ This is working now, but only limited to the plant widgets. I decided I didn't w
 tracking everything other than plants, so I'm going to abandon the drawing component
 and just add support for importing in images created elsewhere.
 
+# Background Image
+
+A background image can be optionally imported onto the map for you to overlay plants onto.
+If an image isn't imported, it just uses a white background that will fill the screen. If
+an image is imported, the canvas is sized to fit the image.
+
+## What if the iamge is larger than the screen?
+
+I should add in scroll bars for large background images to allow for more varied map sizes.
+
+## Saved data size
+
+The saving and loading for this is currently quite inefficient. On initial import, it creates
+an image from the filename. For saving and loading, it dumps the data directly from the tk photo image and imports this from a dict key in the save file. This leads to quite a large save file. It might be better to save the image file separately alongside the plant data, or else find some other way to encode it all. Not a huge deal for what it currently is. 
+
 # Plant Icons
 
 I've got a basic icon, but it's nothing special. This should really be something that
@@ -16,7 +31,6 @@ handy visual clue for what plants are or aren't active.
 
 # To Do
 
-- Add the ability to import background images to layout plants on.
 - (Sorta) Make some nicer icons for plants. I might turn this into a drop down of plant types to
 choose when adding.
 - Colour plant icons based on whether they are planted or not.
@@ -24,5 +38,5 @@ choose when adding.
 
 # Time Worked
 
-13 hrs
+14 hrs
 
