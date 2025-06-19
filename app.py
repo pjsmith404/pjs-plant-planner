@@ -1,4 +1,6 @@
 import json
+import base64
+
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 
@@ -54,9 +56,10 @@ class AppMenu(tk.Menu):
         with open(filename, "r") as f:
             plant_data = json.loads(f.read())
 
-            background_data = plant_data.pop("background", None)
+            background_data = base64.b64decode(plant_data.pop("background", None))
+            background_image = tk.PhotoImage(data=background_data)
             if background_data:
-                self._map.load_background(background_data)
+                self._map.set_background(background_image)
 
             for plant in plant_data.values():
                 self._map.add_plant(
@@ -68,6 +71,7 @@ class AppMenu(tk.Menu):
 
     def save_file(self):
         if not self._save_file:
+            # TODO: This somehow causes an infinite loop if you decide not to save a new file
             self.save_file_prompt()
         if self._map:
             with open(self._save_file, "w") as f:
@@ -90,11 +94,13 @@ class AppMenu(tk.Menu):
 
     def import_background(self):
         filename = filedialog.askopenfilename()
+        background_image = tk.PhotoImage(file=filename)
+
         if self._map:
-            self._map.set_background(filename)
+            self._map.set_background(background_image)
         else:
             self.new_file()
-            self._map.set_background(filename)
+            self._map.set_background(background_image)
 
 class MapCanvas(tk.Canvas):
     def __init__(self, parent):
@@ -110,7 +116,7 @@ class MapCanvas(tk.Canvas):
         self._state = {}
 
     def add_plant(self, name=None, planted=None, x=10, y=10):
-        widget = self.create_image(x, y, image=self._tree_icon, anchor="nw")
+        widget = self.create_image(x, y, image=self._tree_icon, anchor="nw", tags=("plant"))
         plant = Plant(self, widget, name, planted)
         self.update_plant_state(plant)
 
@@ -124,25 +130,23 @@ class MapCanvas(tk.Canvas):
             "y": y
         }
 
+    def update_background_state(self):
+        background = self._background.data("png")
+        b64_encoded_bg = base64.b64encode(background)
+        b64_ascii_bg = b64_encoded_bg.decode("ascii")
+        self._state["background"] = b64_ascii_bg
+
     def get_canvas_state(self):
         return self._state
 
-    def set_background(self, filename):
-        self._background = tk.PhotoImage(file=filename)
+    def set_background(self, image):
+        self._background = image
+
         self.config(width=self._background.width(), height=self._background.height())
-        self.create_image(0, 0, image=self._background, anchor="nw")
+        widget = self.create_image(0, 0, image=self._background, anchor="nw", tags=("background"))
         self.pack(fill=tk.NONE, expand=False)
 
-        self._state["background"] = self._background.data()
-
-    def load_background(self, image_data):
-        self._background = tk.PhotoImage()
-        self._background.put(image_data)
-        self.config(width=self._background.width(), height=self._background.height())
-        self.create_image(0, 0, image=self._background, anchor="nw")
-        self.pack(fill=tk.NONE, expand=False)
-
-        self._state["background"] = self._background.data()
+        self.update_background_state()
 
 class Plant:
     def __init__(self, canvas, widget, name=None, planted=None):

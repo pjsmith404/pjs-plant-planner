@@ -18,11 +18,6 @@ an image is imported, the canvas is sized to fit the image.
 
 I should add in scroll bars for large background images to allow for more varied map sizes.
 
-## Saved data size
-
-The saving and loading for this is currently quite inefficient. On initial import, it creates
-an image from the filename. For saving and loading, it dumps the data directly from the tk photo image and imports this from a dict key in the save file. This leads to quite a large save file. It might be better to save the image file separately alongside the plant data, or else find some other way to encode it all. Not a huge deal for what it currently is. 
-
 # Plant Icons
 
 I've got a basic icon, but it's nothing special. This should really be something that
@@ -38,5 +33,5 @@ choose when adding.
 
 # Time Worked
 
-14 hrs
+15 hrs
 
