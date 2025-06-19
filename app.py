@@ -145,7 +145,7 @@ class MapCanvas(tk.Canvas):
         self.config(width=self._background.width(), height=self._background.height())
         widget = self.create_image(0, 0, image=self._background, anchor="nw", tags=("background"))
         self.pack(fill=tk.NONE, expand=False)
-
+        self.lower(widget)
         self.update_background_state()
 
 class Plant:
