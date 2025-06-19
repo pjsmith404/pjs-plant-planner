@@ -14,7 +14,7 @@ A background image can be optionally imported onto the map for you to overlay pl
 If an image isn't imported, it just uses a white background that will fill the screen. If
 an image is imported, the canvas is sized to fit the image.
 
-## What if the iamge is larger than the screen?
+## What if the image is larger than the screen?
 
 I should add in scroll bars for large background images to allow for more varied map sizes.
 
