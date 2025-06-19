@@ -30,6 +30,7 @@ handy visual clue for what plants are or aren't active.
 choose when adding.
 - Colour plant icons based on whether they are planted or not.
 - Add some validation of the date so the planted time actually is a date.
+- There's a bug where the save as dialog won't let you close it. Fix that.
 
 # Time Worked
 
