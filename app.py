@@ -45,43 +45,46 @@ class AppMenu(tk.Menu):
         menu_map.add_command(label="Import Background...", command=self.import_background)
 
     def new_file(self):
+        self._save_file = None
         if self._map:
             self._map.destroy()
         self._map = MapCanvas(self._parent)
 
     def open_file(self):
-        self.new_file()
         filename = filedialog.askopenfilename()
-        self._save_file = filename
-        with open(filename, "r") as f:
-            plant_data = json.loads(f.read())
+        if filename:
+            self.new_file()
+            self._save_file = filename
+            with open(filename, "r") as f:
+                plant_data = json.loads(f.read())
 
-            background_data = base64.b64decode(plant_data.pop("background", None))
-            background_image = tk.PhotoImage(data=background_data)
-            if background_data:
-                self._map.set_background(background_image)
+                background_data = plant_data.pop("background", None)
+                if background_data:
+                    decoded_data = base64.b64decode(background_data)
+                    background_image = tk.PhotoImage(data=background_data)
+                    self._map.set_background(background_image)
 
-            for plant in plant_data.values():
-                self._map.add_plant(
-                    plant.get("name"),
-                    plant.get("planted"),
-                    plant.get("x"),
-                    plant.get("y")
-                )
+                for plant in plant_data.values():
+                    self._map.add_plant(
+                        plant.get("name"),
+                        plant.get("planted"),
+                        plant.get("x"),
+                        plant.get("y")
+                    )
 
     def save_file(self):
         if not self._save_file:
-            # TODO: This somehow causes an infinite loop if you decide not to save a new file
             self.save_file_prompt()
-        if self._map:
+        if self._map and self._save_file:
             with open(self._save_file, "w") as f:
                 f.write(json.dumps(self._map.get_canvas_state()))
 
     def save_file_prompt(self):
         if self._map:
             filename = filedialog.asksaveasfilename()
-            self._save_file = filename
-            self.save_file()
+            if filename:
+                self._save_file = filename
+                self.save_file()
 
     def close_file(self):
         if self._map:
