@@ -89,6 +89,7 @@ class AppMenu(tk.Menu):
     def close_file(self):
         if self._map:
             self._map.destroy()
+            self._map = None
             self._save_file = None
 
     def add_plant(self):
