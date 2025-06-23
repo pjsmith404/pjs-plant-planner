@@ -10,7 +10,7 @@ class App(tk.Tk):
 
         self.title("PJ's Plant Planner")
 
-        self.option_add('*tearOff', False)
+        self.option_add("*tearOff", False)
 
         menubar = AppMenu(self)
         self['menu'] = menubar
