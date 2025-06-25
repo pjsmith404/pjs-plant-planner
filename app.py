@@ -45,6 +45,7 @@ class AppMenu(tk.Menu):
         self.menu_plants = tk.Menu(self)
         self.add_cascade(menu=self.menu_plants, label="Plants")
         self.menu_plants.add_command(label="Add Plant", command=self.add_plant, state=tk.DISABLED)
+        self.menu_plants.add_command(label="List Plants", command=self.list_plants, state=tk.DISABLED)
 
         self.menu_map = tk.Menu(self)
         self.add_cascade(menu=self.menu_map, label="Map")
@@ -57,13 +58,14 @@ class AppMenu(tk.Menu):
             self.menu_file.entryconfigure("Save As...", state=tk.NORMAL)
             self.menu_file.entryconfigure("Close", state=tk.NORMAL)
             self.menu_plants.entryconfigure("Add Plant", state=tk.NORMAL)
+            self.menu_plants.entryconfigure("List Plants", state=tk.NORMAL)
 
     def map_inactive(self):
         if not self._map:
             self.menu_file.entryconfigure("Save", state=tk.DISABLED)
             self.menu_file.entryconfigure("Save As...", state=tk.DISABLED)
             self.menu_file.entryconfigure("Close", state=tk.DISABLED)
-            self.menu_plants.entryconfigure("Add Plant", state=tk.DISABLED)
+            self.menu_plants.entryconfigure("List Plants", state=tk.DISABLED)
 
     def new_file(self):
         self._save_file = None
@@ -125,6 +127,15 @@ class AppMenu(tk.Menu):
         if self._map:
             self._map.add_plant()
 
+    def list_plants(self):
+        if not self._map:
+            return
+
+        state = self._map.get_plant_state()
+
+        print(state)
+        plant_window = PlantWindow(self._parent, state)
+
     def import_background(self):
         filename = filedialog.askopenfilename()
         background_image = tk.PhotoImage(file=filename)
@@ -179,6 +190,12 @@ class MapCanvas(tk.Canvas):
 
     def get_canvas_state(self):
         return self._state
+
+    def get_plant_state(self):
+        state = self.get_canvas_state()
+        state.pop("background", None)
+
+        return state
 
     def set_background(self, image):
         self._background = image
@@ -245,4 +262,36 @@ class Plant:
 
     def drag_stop(self, event):
         self._canvas.update_plant_state(self)
+
+class PlantWindow(tk.Toplevel):
+    def __init__(self, parent, plant_state):
+        super().__init__(parent)
+
+        self.title("Plant List")
+
+        frame = tk.Frame(self)
+        frame.grid(column=0, row=0)
+
+        name_frame = tk.Frame(frame, borderwidth=5)
+        name_frame.grid(column=0, row=0)
+
+        name_label = ttk.Label(name_frame, text="Name:")
+        name_label.grid(column=0, row=0)
+
+        planted_frame = tk.Frame(frame, borderwidth=5)
+        planted_frame.grid(column=1, row=0)
+
+        planted_label = ttk.Label(planted_frame, text="Planted:")
+        planted_label.grid(column=0, row=0)
+
+        i = 1
+
+        for plant in plant_state.values():
+            name_label = ttk.Label(name_frame, text=plant.get("name"))
+            name_label.grid(column=0, row=i)
+
+            planted_label = ttk.Label(planted_frame, text=plant.get("planted"))
+            planted_label.grid(column=0, row=i)
+
+            i += 1
 
