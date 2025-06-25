@@ -22,11 +22,21 @@ class TestAppMenu(unittest.TestCase):
         self.assertEqual(self.menubar._map, None)
         self.assertEqual(self.menubar._save_file, None)
 
+        self.assertEqual(self.menubar.menu_file.entrycget("Save", "state"), "disabled")
+        self.assertEqual(self.menubar.menu_file.entrycget("Save As...", "state"), "disabled")
+        self.assertEqual(self.menubar.menu_file.entrycget("Close", "state"), "disabled")
+        self.assertEqual(self.menubar.menu_plants.entrycget("Add Plant", "state"), "disabled")
+
     def test_new_file(self):
         self.menubar.new_file()
 
         self.assertEqual(self.menubar._save_file, None)
         self.assertIsInstance(self.menubar._map, tk.Canvas)
+
+        self.assertEqual(self.menubar.menu_file.entrycget("Save", "state"), "normal")
+        self.assertEqual(self.menubar.menu_file.entrycget("Save As...", "state"), "normal")
+        self.assertEqual(self.menubar.menu_file.entrycget("Close", "state"), "normal")
+        self.assertEqual(self.menubar.menu_plants.entrycget("Add Plant", "state"), "normal")
 
     def test_save_file(self):
         save_file = "./test_file"
@@ -55,6 +65,11 @@ class TestAppMenu(unittest.TestCase):
 
         self.assertEqual(self.menubar._map, None)
         self.assertEqual(self.menubar._save_file, None)
+
+        self.assertEqual(self.menubar.menu_file.entrycget("Save", "state"), "disabled")
+        self.assertEqual(self.menubar.menu_file.entrycget("Save As...", "state"), "disabled")
+        self.assertEqual(self.menubar.menu_file.entrycget("Close", "state"), "disabled")
+        self.assertEqual(self.menubar.menu_plants.entrycget("Add Plant", "state"), "disabled")
 
 if __name__ == "__main__":
     unittest.main()
