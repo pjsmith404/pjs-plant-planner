@@ -26,11 +26,11 @@ handy visual clue for what plants are or aren't active.
 
 # To Do
 
-- (Sorta) Make some nicer icons for plants. I might turn this into a drop down of plant types to
+- Make some nicer icons for plants. I might turn this into a drop down of plant types to
 choose when adding.
 - Colour plant icons based on whether they are planted or not.
 - Add some validation of the date so the planted time actually is a date.
-- There's a bug where the save as dialog won't let you close it. Fix that.
+- Add the ability to undo (and possibly also redo) changes to the map.
 
 # Time Worked
 
