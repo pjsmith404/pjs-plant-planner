@@ -91,8 +91,10 @@ class AppMenu(tk.Menu):
                     self._map.add_plant(
                         plant.get("name"),
                         plant.get("planted"),
-                        plant.get("x"),
-                        plant.get("y")
+                        plant.get("x1"),
+                        plant.get("y1"),
+                        plant.get("x2"),
+                        plant.get("y2")
                     )
             self.map_active()
 
@@ -140,26 +142,34 @@ class MapCanvas(tk.Canvas):
 
         self.pack(fill=tk.BOTH, expand=True)
 
-        self._tree_icon = tk.PhotoImage(file='icons/tree_planted.gif')
-        self._tree_icon = self._tree_icon.subsample(4)
-
         self._background = None
-
         self._state = {}
 
-    def add_plant(self, name=None, planted=None, x=10, y=10):
-        widget = self.create_image(x, y, image=self._tree_icon, anchor="nw", tags=("plant"))
+    def add_plant(self, name=None, planted=None, x1=10, y1=10, x2=20, y2=20):
+        widget = self.create_rectangle(
+            x1,
+            y1,
+            x2,
+            y2,
+            outline="black",
+            fill="green",
+            width=2,
+            tags=("plant")
+        )
+
         plant = Plant(self, widget, name, planted)
         self.update_plant_state(plant)
 
     def update_plant_state(self, plant):
-        x, y = self.coords(plant.widget)
+        x1, y1, x2, y2 = self.coords(plant.widget)
 
         self._state[plant.widget] = {
             "name": plant.name.get(),
             "planted": plant.planted.get(),
-            "x": x,
-            "y": y
+            "x1": x1,
+            "y1": y1,
+            "x2": x2,
+            "y2": y2
         }
 
     def update_background_state(self):
