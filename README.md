@@ -31,6 +31,7 @@ choose when adding.
 - Colour plant icons based on whether they are planted or not.
 - Add some validation of the date so the planted time actually is a date.
 - Add the ability to undo (and possibly also redo) changes to the map.
+- Add the ability to list all plants in a new dialog.
 
 # Time Worked
 
