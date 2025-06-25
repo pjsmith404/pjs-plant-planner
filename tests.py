@@ -59,6 +59,17 @@ class TestAppMenu(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             open(save_file, "r")
 
+    def test_save_file_prompt(self):
+        save_file = "./test_file"
+
+        self.menubar.new_file()
+        self.menubar.save_file_prompt(save_file)
+
+        with open(save_file, "r") as f:
+            self.assertEqual(f.read(), "{}")
+
+        os.remove(save_file)
+
     def test_close_file(self):
         self.menubar.new_file()
         self.menubar.close_file()

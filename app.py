@@ -103,9 +103,11 @@ class AppMenu(tk.Menu):
             with open(self._save_file, "w") as f:
                 f.write(json.dumps(self._map.get_canvas_state()))
 
-    def save_file_prompt(self):
+    def save_file_prompt(self, filename=None):
+        # filename exists as a parameter purely for unit testing around the UI
         if self._map:
-            filename = filedialog.asksaveasfilename()
+            if not filename:
+                filename = filedialog.asksaveasfilename()
             if filename:
                 self._save_file = filename
                 self.save_file()
