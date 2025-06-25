@@ -36,5 +36,5 @@ choose when adding.
 
 # Time Worked
 
-17 hrs
+20 hrs
 
