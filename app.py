@@ -24,31 +24,54 @@ class AppMenu(tk.Menu):
 
         self._save_file = None
 
-        menu_file = tk.Menu(self)
-        self.add_cascade(menu=menu_file, label="File")
+        self.menu_file = tk.Menu(self)
+        self.add_cascade(menu=self.menu_file, label="File")
 
-        menu_file.add_command(label="New File", command=self.new_file)
-        menu_file.add_command(label="Open...", command=self.open_file)
-        menu_file.add_separator()
-        menu_file.add_command(label="Save", command=self.save_file)
-        menu_file.add_command(label="Save As...", command=self.save_file_prompt)
-        menu_file.add_separator()
-        menu_file.add_command(label="Close", command=self.close_file)
-        menu_file.add_command(label="Exit", command=self._parent.destroy)
+        self.menu_file.add_command(label="New File", command=self.new_file)
+        self.menu_file.add_command(label="Open...", command=self.open_file)
 
-        menu_plants = tk.Menu(self)
-        self.add_cascade(menu=menu_plants, label="Plants")
-        menu_plants.add_command(label="Add Plant", command=self.add_plant)
+        self.menu_file.add_separator()
+        self.menu_file.add_command(label="Save", command=self.save_file, state=tk.DISABLED)
+        self.menu_file.add_command(
+            label="Save As...",
+            command=self.save_file_prompt,
+            state=tk.DISABLED
+        )
 
-        menu_map = tk.Menu(self)
-        self.add_cascade(menu=menu_map, label="Map")
-        menu_map.add_command(label="Import Background...", command=self.import_background)
+        self.menu_file.add_separator()
+        self.menu_file.add_command(label="Close", command=self.close_file, state=tk.DISABLED)
+        self.menu_file.add_command(label="Exit", command=self._parent.destroy)
+
+        self.menu_plants = tk.Menu(self)
+        self.add_cascade(menu=self.menu_plants, label="Plants")
+        self.menu_plants.add_command(label="Add Plant", command=self.add_plant, state=tk.DISABLED)
+
+        self.menu_map = tk.Menu(self)
+        self.add_cascade(menu=self.menu_map, label="Map")
+        self.menu_map.add_command(label="Import Background...", command=self.import_background)
+
+
+    def map_active(self):
+        if self._map:
+            self.menu_file.entryconfigure("Save", state=tk.NORMAL)
+            self.menu_file.entryconfigure("Save As...", state=tk.NORMAL)
+            self.menu_file.entryconfigure("Close", state=tk.NORMAL)
+            self.menu_plants.entryconfigure("Add Plant", state=tk.NORMAL)
+
+    def map_inactive(self):
+        if not self._map:
+            self.menu_file.entryconfigure("Save", state=tk.DISABLED)
+            self.menu_file.entryconfigure("Save As...", state=tk.DISABLED)
+            self.menu_file.entryconfigure("Close", state=tk.DISABLED)
+            self.menu_plants.entryconfigure("Add Plant", state=tk.DISABLED)
 
     def new_file(self):
         self._save_file = None
         if self._map:
             self._map.destroy()
         self._map = MapCanvas(self._parent)
+
+        self.map_active()
 
     def open_file(self):
         filename = filedialog.askopenfilename()
@@ -71,6 +94,7 @@ class AppMenu(tk.Menu):
                         plant.get("x"),
                         plant.get("y")
                     )
+            self.map_active()
 
     def save_file(self):
         if not self._save_file:
@@ -91,6 +115,8 @@ class AppMenu(tk.Menu):
             self._map.destroy()
             self._map = None
             self._save_file = None
+
+            self.map_inactive()
 
     def add_plant(self):
         if self._map:
