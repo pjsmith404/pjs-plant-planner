@@ -83,7 +83,6 @@ class AppMenu(tk.Menu):
 
                 background_data = plant_data.pop("background", None)
                 if background_data:
-                    decoded_data = base64.b64decode(background_data)
                     background_image = tk.PhotoImage(data=background_data)
                     self._map.set_background(background_image)
 
