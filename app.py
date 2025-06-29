@@ -12,6 +12,9 @@ class App(tk.Tk):
 
         self.option_add("*tearOff", False)
 
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+
         menubar = AppMenu(self)
         self['menu'] = menubar
 
@@ -147,9 +150,24 @@ class AppMenu(tk.Menu):
 
 class MapCanvas(tk.Canvas):
     def __init__(self, parent):
-        super().__init__(parent, bg="white")
+        self.h = ttk.Scrollbar(parent, orient=tk.HORIZONTAL)
+        self.v = ttk.Scrollbar(parent, orient=tk.VERTICAL)
+        super().__init__(
+            parent,
+            bg="white",
+            scrollregion=(0, 0, parent.winfo_screenwidth(), parent.winfo_screenheight()),
+            yscrollcommand=self.v.set,
+            xscrollcommand=self.h.set
+        )
+        self.h["command"] = self.xview
+        self.v["command"] = self.yview
 
-        self.pack(fill=tk.BOTH, expand=True)
+        self.grid(column=0, row=0, sticky=(tk.N,tk.W,tk.E,tk.S))
+        self.columnconfigure(0, weight=1)
+        self.h.grid(column=0, row=1, sticky=(tk.W,tk.E))
+        self.v.grid(column=1, row=0, sticky=(tk.N,tk.S))
+
+        #self.grid(fill=tk.BOTH, expand=True)
 
         self._background = None
         self._state = {}
@@ -199,9 +217,13 @@ class MapCanvas(tk.Canvas):
     def set_background(self, image):
         self._background = image
 
-        self.config(width=self._background.width(), height=self._background.height())
+        self.config(
+            scrollregion=(0, 0, self._background.width(), self._background.height()),
+            yscrollcommand=self.v.set,
+            xscrollcommand=self.h.set
+        )
         widget = self.create_image(0, 0, image=self._background, anchor="nw", tags=("background"))
-        self.pack(fill=tk.NONE, expand=False)
+
         self.lower(widget)
         self.update_background_state()
 
