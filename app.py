@@ -133,7 +133,6 @@ class AppMenu(tk.Menu):
 
         state = self._map.get_plant_state()
 
-        print(state)
         plant_window = PlantWindow(self._parent, state)
 
     def import_background(self):
