@@ -45,6 +45,7 @@ choose when adding.
 - Add the ability to jump to plants from the list plant window.
 - Prompt to save on window close if state mismatches saved.
 - Add a plant popup on mouseover
+- Add ability to scroll with mousewheel
 
 # Time Worked
 
