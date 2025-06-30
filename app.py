@@ -260,6 +260,14 @@ class Plant:
         self._canvas.tag_bind(self.widget, "<ButtonRelease-1>", self.drag_stop)
         self._canvas.tag_bind(self.widget, "<Button-3>", self.plant_dlg)
 
+        self.update_planted_colour()
+
+    def update_planted_colour(self):
+        if self.planted.get():
+            self._canvas.itemconfigure(self.widget, fill="green")
+        else:
+            self._canvas.itemconfigure(self.widget, fill="red")
+
     def plant_dlg(self, *args):
         dlg = tk.Toplevel()
 
@@ -280,6 +288,7 @@ class Plant:
     def dismiss_dlg(self, dlg):
         dlg.grab_release()
         dlg.destroy()
+        self.update_planted_colour()
         self._canvas.update_plant_state(self)
 
     def drag_start(self, event):
