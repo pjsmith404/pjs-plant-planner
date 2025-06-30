@@ -77,6 +77,7 @@ class AppMenu(tk.Menu):
             self.menu_file.entryconfigure("Save", state=tk.DISABLED)
             self.menu_file.entryconfigure("Save As...", state=tk.DISABLED)
             self.menu_file.entryconfigure("Close", state=tk.DISABLED)
+            self.menu_plants.entryconfigure("Add Plant", state=tk.DISABLED)
             self.menu_plants.entryconfigure("List Plants", state=tk.DISABLED)
 
     def new_file(self):
