@@ -4,6 +4,7 @@ import base64
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -16,7 +17,8 @@ class App(tk.Tk):
         self.columnconfigure(0, weight=1)
 
         menubar = AppMenu(self)
-        self['menu'] = menubar
+        self["menu"] = menubar
+
 
 class AppMenu(tk.Menu):
     def __init__(self, parent):
@@ -34,26 +36,33 @@ class AppMenu(tk.Menu):
         self.menu_file.add_command(label="Open...", command=self.open_file)
 
         self.menu_file.add_separator()
-        self.menu_file.add_command(label="Save", command=self.save_file, state=tk.DISABLED)
         self.menu_file.add_command(
-            label="Save As...",
-            command=self.save_file_prompt,
-            state=tk.DISABLED
+            label="Save", command=self.save_file, state=tk.DISABLED
+        )
+        self.menu_file.add_command(
+            label="Save As...", command=self.save_file_prompt, state=tk.DISABLED
         )
 
         self.menu_file.add_separator()
-        self.menu_file.add_command(label="Close", command=self.close_file, state=tk.DISABLED)
+        self.menu_file.add_command(
+            label="Close", command=self.close_file, state=tk.DISABLED
+        )
         self.menu_file.add_command(label="Exit", command=self._parent.destroy)
 
         self.menu_plants = tk.Menu(self)
         self.add_cascade(menu=self.menu_plants, label="Plants")
-        self.menu_plants.add_command(label="Add Plant", command=self.add_plant, state=tk.DISABLED)
-        self.menu_plants.add_command(label="List Plants", command=self.list_plants, state=tk.DISABLED)
+        self.menu_plants.add_command(
+            label="Add Plant", command=self.add_plant, state=tk.DISABLED
+        )
+        self.menu_plants.add_command(
+            label="List Plants", command=self.list_plants, state=tk.DISABLED
+        )
 
         self.menu_map = tk.Menu(self)
         self.add_cascade(menu=self.menu_map, label="Map")
-        self.menu_map.add_command(label="Import Background...", command=self.import_background)
-
+        self.menu_map.add_command(
+            label="Import Background...", command=self.import_background
+        )
 
     def map_active(self):
         if self._map:
@@ -98,7 +107,7 @@ class AppMenu(tk.Menu):
                         plant.get("x1"),
                         plant.get("y1"),
                         plant.get("x2"),
-                        plant.get("y2")
+                        plant.get("y2"),
                     )
             self.map_active()
 
@@ -148,6 +157,7 @@ class AppMenu(tk.Menu):
             self.new_file()
             self._map.set_background(background_image)
 
+
 class MapCanvas(tk.Canvas):
     def __init__(self, parent):
         self.h = ttk.Scrollbar(parent, orient=tk.HORIZONTAL)
@@ -155,33 +165,31 @@ class MapCanvas(tk.Canvas):
         super().__init__(
             parent,
             bg="white",
-            scrollregion=(0, 0, parent.winfo_screenwidth(), parent.winfo_screenheight()),
+            scrollregion=(
+                0,
+                0,
+                parent.winfo_screenwidth(),
+                parent.winfo_screenheight(),
+            ),
             yscrollcommand=self.v.set,
-            xscrollcommand=self.h.set
+            xscrollcommand=self.h.set,
         )
         self.h["command"] = self.xview
         self.v["command"] = self.yview
 
-        self.grid(column=0, row=0, sticky=(tk.N,tk.W,tk.E,tk.S))
+        self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
         self.columnconfigure(0, weight=1)
-        self.h.grid(column=0, row=1, sticky=(tk.W,tk.E))
-        self.v.grid(column=1, row=0, sticky=(tk.N,tk.S))
+        self.h.grid(column=0, row=1, sticky=(tk.W, tk.E))
+        self.v.grid(column=1, row=0, sticky=(tk.N, tk.S))
 
-        #self.grid(fill=tk.BOTH, expand=True)
+        # self.grid(fill=tk.BOTH, expand=True)
 
         self._background = None
         self._state = {}
 
     def add_plant(self, name=None, planted=None, x1=10, y1=10, x2=20, y2=20):
         widget = self.create_rectangle(
-            x1,
-            y1,
-            x2,
-            y2,
-            outline="black",
-            fill="green",
-            width=2,
-            tags=("plant")
+            x1, y1, x2, y2, outline="black", fill="green", width=2, tags=("plant")
         )
 
         plant = Plant(self, widget, name, planted)
@@ -196,7 +204,7 @@ class MapCanvas(tk.Canvas):
             "x1": x1,
             "y1": y1,
             "x2": x2,
-            "y2": y2
+            "y2": y2,
         }
 
     def update_background_state(self):
@@ -220,12 +228,15 @@ class MapCanvas(tk.Canvas):
         self.config(
             scrollregion=(0, 0, self._background.width(), self._background.height()),
             yscrollcommand=self.v.set,
-            xscrollcommand=self.h.set
+            xscrollcommand=self.h.set,
         )
-        widget = self.create_image(0, 0, image=self._background, anchor="nw", tags=("background"))
+        widget = self.create_image(
+            0, 0, image=self._background, anchor="nw", tags=("background")
+        )
 
         self.lower(widget)
         self.update_background_state()
+
 
 class Plant:
     def __init__(self, canvas, widget, name=None, planted=None):
@@ -284,6 +295,7 @@ class Plant:
     def drag_stop(self, event):
         self._canvas.update_plant_state(self)
 
+
 class PlantWindow(tk.Toplevel):
     def __init__(self, parent, plant_state):
         super().__init__(parent)
@@ -315,4 +327,3 @@ class PlantWindow(tk.Toplevel):
             planted_label.grid(column=0, row=i)
 
             i += 1
-

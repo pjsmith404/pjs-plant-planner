@@ -4,11 +4,13 @@ import tkinter as tk
 
 from app import App, AppMenu, MapCanvas
 
+
 class TestApp(unittest.TestCase):
     def test_app_config(self):
         app = App()
         self.assertEqual(app.title(), "PJ's Plant Planner")
         self.assertEqual(app.option_get("tearOff", "Tk"), "0")
+
 
 class TestAppMenu(unittest.TestCase):
     def setUp(self):
@@ -23,9 +25,13 @@ class TestAppMenu(unittest.TestCase):
         self.assertEqual(self.menubar._save_file, None)
 
         self.assertEqual(self.menubar.menu_file.entrycget("Save", "state"), "disabled")
-        self.assertEqual(self.menubar.menu_file.entrycget("Save As...", "state"), "disabled")
+        self.assertEqual(
+            self.menubar.menu_file.entrycget("Save As...", "state"), "disabled"
+        )
         self.assertEqual(self.menubar.menu_file.entrycget("Close", "state"), "disabled")
-        self.assertEqual(self.menubar.menu_plants.entrycget("Add Plant", "state"), "disabled")
+        self.assertEqual(
+            self.menubar.menu_plants.entrycget("Add Plant", "state"), "disabled"
+        )
 
     def test_new_file(self):
         self.menubar.new_file()
@@ -34,9 +40,13 @@ class TestAppMenu(unittest.TestCase):
         self.assertIsInstance(self.menubar._map, tk.Canvas)
 
         self.assertEqual(self.menubar.menu_file.entrycget("Save", "state"), "normal")
-        self.assertEqual(self.menubar.menu_file.entrycget("Save As...", "state"), "normal")
+        self.assertEqual(
+            self.menubar.menu_file.entrycget("Save As...", "state"), "normal"
+        )
         self.assertEqual(self.menubar.menu_file.entrycget("Close", "state"), "normal")
-        self.assertEqual(self.menubar.menu_plants.entrycget("Add Plant", "state"), "normal")
+        self.assertEqual(
+            self.menubar.menu_plants.entrycget("Add Plant", "state"), "normal"
+        )
 
     def test_save_file(self):
         save_file = "./test_file"
@@ -78,9 +88,14 @@ class TestAppMenu(unittest.TestCase):
         self.assertEqual(self.menubar._save_file, None)
 
         self.assertEqual(self.menubar.menu_file.entrycget("Save", "state"), "disabled")
-        self.assertEqual(self.menubar.menu_file.entrycget("Save As...", "state"), "disabled")
+        self.assertEqual(
+            self.menubar.menu_file.entrycget("Save As...", "state"), "disabled"
+        )
         self.assertEqual(self.menubar.menu_file.entrycget("Close", "state"), "disabled")
-        self.assertEqual(self.menubar.menu_plants.entrycget("Add Plant", "state"), "disabled")
+        self.assertEqual(
+            self.menubar.menu_plants.entrycget("Add Plant", "state"), "disabled"
+        )
+
 
 class TestMapCanvas(unittest.TestCase):
     def test_config(self):
@@ -101,13 +116,14 @@ class TestMapCanvas(unittest.TestCase):
                 "x1": 10.0,
                 "x2": 20.0,
                 "y1": 10.0,
-                "y2": 20.0
-                }
+                "y2": 20.0,
             }
+        }
 
         canvas.add_plant(name="1", planted="1")
 
         self.assertEqual(canvas.get_canvas_state(), test_state)
+
 
 if __name__ == "__main__":
     unittest.main()
