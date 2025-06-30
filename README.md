@@ -2,39 +2,50 @@
 
 An app to help keep track of what I've planted where and when.
 
-# Saving and Loading
+# Getting Started
 
-This is working now, but only limited to the plant widgets. I decided I didn't want to deal with
-tracking everything other than plants, so I'm going to abandon the drawing component
-and just add support for importing in images created elsewhere.
+There's some packages used for dev, but the application itself doesn't require any special
+additions. Just launch main.py using your tool of choice.
 
-# Background Image
+For example: `uv run main.py`
 
-A background image can be optionally imported onto the map for you to overlay plants onto.
-If an image isn't imported, it just uses a white background that will fill the screen. If
-an image is imported, the canvas is sized to fit the image.
+## The Basics
 
-## What if the image is larger than the screen?
+From there, the interface should start to look pretty familiar. Here's some suggestions to
+get started:
 
-I should add in scroll bars for large background images to allow for more varied map sizes.
+1. Open the "File" menu and click "New File"
+2. Open the "Plants" menu and click "Add Plant"
+3. Give it a name and a planted date.
+4. Click and drag the new plant around on the map
 
-# Plant Icons
+## Importing a background
 
-I've got a basic icon, but it's nothing special. This should really be something that
-can be greyed out (or some other colour)  when no planted date is set. This will give a
-handy visual clue for what plants are or aren't active.
+Granted, a white screen isn't much of a map. You can use the "Map" menu to import an image file
+to use as the background. File formats have not been rigorously tested, PNG is recommended.
+
+## Listing Plants
+
+You can see a complete list of what you've planted by opening the "Plants" menu and selecting
+"List Plants".
+
+## Saving and Loading
+
+In the "File" menu you can save and load maps just as you would expect. Call these files whatever
+you want and keep them where ever you want. It's a really simple text file that can be viewed and
+passed around to your heart's content.
 
 # To Do
 
 - Make some nicer icons for plants. I might turn this into a drop down of plant types to
 choose when adding.
-- Colour plant icons based on whether they are planted or not.
-- Add some validation of the date so the planted time actually is a date.
+- Add validation of the date so the planted time actually is a date.
 - Add the ability to undo (and possibly also redo) changes to the map.
-- Add the ability to list all plants in a new dialog.
+- Add the ability to modify plants in the list plant window.
+- Add the ability to jump to plants from the list plant window.
 - Prompt to save on window close if state mismatches saved.
 
 # Time Worked
 
-21 hrs
+22.5 hrs
 
