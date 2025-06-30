@@ -302,29 +302,36 @@ class PlantWindow(tk.Toplevel):
         super().__init__(parent)
 
         self.title("Plant List")
+        self.columnconfigure(0, weight=1)
 
-        frame = tk.Frame(self)
+        name_column = 0
+        planted_column = 2
+
+        frame = ttk.Frame(self, padding=10, relief="ridge")
         frame.grid(column=0, row=0)
 
-        name_frame = tk.Frame(frame, borderwidth=5)
-        name_frame.grid(column=0, row=0)
+        name_label = ttk.Label(frame, text="Name:")
+        name_label.grid(column=name_column, row=0, padx=50)
 
-        name_label = ttk.Label(name_frame, text="Name:")
-        name_label.grid(column=0, row=0)
+        planted_label = ttk.Label(frame, text="Planted:")
+        planted_label.grid(column=planted_column, row=0, padx=50)
 
-        planted_frame = tk.Frame(frame, borderwidth=5)
-        planted_frame.grid(column=1, row=0)
+        s = ttk.Separator(frame, orient=tk.HORIZONTAL)
+        s.grid(columnspan=3, row=1, column=0, sticky=(tk.W, tk.E))
 
-        planted_label = ttk.Label(planted_frame, text="Planted:")
-        planted_label.grid(column=0, row=0)
+        sv = ttk.Separator(frame, orient=tk.VERTICAL)
+        sv.grid(rowspan=1000, row=0, column=1, sticky=(tk.N, tk.S))
 
-        i = 1
+        self.update_idletasks()
+        self.minsize(frame.winfo_width(), 300)
+
+        plant_row = 2
 
         for plant in plant_state.values():
-            name_label = ttk.Label(name_frame, text=plant.get("name"))
-            name_label.grid(column=0, row=i)
+            name_label = ttk.Label(frame, text=plant.get("name"))
+            name_label.grid(column=name_column, row=plant_row)
 
-            planted_label = ttk.Label(planted_frame, text=plant.get("planted"))
-            planted_label.grid(column=0, row=i)
+            planted_label = ttk.Label(frame, text=plant.get("planted"))
+            planted_label.grid(column=planted_column, row=plant_row)
 
-            i += 1
+            plant_row += 1
