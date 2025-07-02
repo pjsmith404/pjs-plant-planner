@@ -50,5 +50,5 @@ choose when adding.
 
 # Time Worked
 
-22.5 hrs
+24.5 hrs
 
