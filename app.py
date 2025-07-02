@@ -183,8 +183,6 @@ class MapCanvas(tk.Canvas):
         self.h.grid(column=0, row=1, sticky=(tk.W, tk.E))
         self.v.grid(column=1, row=0, sticky=(tk.N, tk.S))
 
-        # self.grid(fill=tk.BOTH, expand=True)
-
         self._background = None
         self._state = {}
 
