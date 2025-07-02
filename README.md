@@ -46,6 +46,7 @@ choose when adding.
 - Prompt to save on window close if state mismatches saved.
 - Add a plant popup on mouseover
 - Add ability to scroll with mousewheel
+- Add a help menu
 
 # Time Worked
 
