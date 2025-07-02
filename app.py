@@ -144,9 +144,9 @@ class AppMenu(tk.Menu):
         if not self._map:
             return
 
-        state = self._map.get_plant_state()
+        plants = self._map.get_plants()
 
-        plant_window = PlantWindow(self._parent, state)
+        plant_window = PlantWindow(self._parent, plants)
 
     def import_background(self):
         filename = filedialog.askopenfilename()
@@ -184,7 +184,7 @@ class MapCanvas(tk.Canvas):
         self.v.grid(column=1, row=0, sticky=(tk.N, tk.S))
 
         self._background = None
-        self._state = {}
+        self._plants = {}
 
     def add_plant(self, name=None, planted=None, x1=10, y1=10, x2=20, y2=20):
         widget = self.create_rectangle(
@@ -195,31 +195,33 @@ class MapCanvas(tk.Canvas):
         self.update_plant_state(plant)
 
     def update_plant_state(self, plant):
-        x1, y1, x2, y2 = self.coords(plant.widget)
-
-        self._state[plant.widget] = {
-            "name": plant.name.get(),
-            "planted": plant.planted.get(),
-            "x1": x1,
-            "y1": y1,
-            "x2": x2,
-            "y2": y2,
-        }
-
-    def update_background_state(self):
-        background = self._background.data("png")
-        b64_encoded_bg = base64.b64encode(background)
-        b64_ascii_bg = b64_encoded_bg.decode("ascii")
-        self._state["background"] = b64_ascii_bg
+        self._plants[plant.widget] = plant
 
     def get_canvas_state(self):
-        return self._state
+        state = {}
 
-    def get_plant_state(self):
-        state = self.get_canvas_state()
-        state.pop("background", None)
+        if self._background:
+            background = self._background.data("png")
+            b64_encoded_bg = base64.b64encode(background)
+            b64_ascii_bg = b64_encoded_bg.decode("ascii")
+            state["background"] = b64_ascii_bg
+
+        for plant in self._plants.values():
+            x1, y1, x2, y2 = self.coords(plant.widget)
+
+            state[plant.widget] = {
+                "name": plant.name.get(),
+                "planted": plant.planted.get(),
+                "x1": x1,
+                "y1": y1,
+                "x2": x2,
+                "y2": y2,
+            }
 
         return state
+
+    def get_plants(self):
+        return self._plants
 
     def set_background(self, image):
         self._background = image
@@ -234,7 +236,6 @@ class MapCanvas(tk.Canvas):
         )
 
         self.lower(widget)
-        self.update_background_state()
 
 
 class Plant:
@@ -311,7 +312,7 @@ class Plant:
 
 
 class PlantWindow(tk.Toplevel):
-    def __init__(self, parent, plant_state):
+    def __init__(self, parent, plants):
         super().__init__(parent)
 
         self.title("Plant List")
@@ -333,18 +334,18 @@ class PlantWindow(tk.Toplevel):
         s.grid(columnspan=3, row=1, column=0, sticky=(tk.W, tk.E))
 
         sv = ttk.Separator(frame, orient=tk.VERTICAL)
-        sv.grid(rowspan=1000, row=0, column=1, sticky=(tk.N, tk.S))
+        sv.grid(rowspan=len(plants.values()), row=0, column=1, sticky=(tk.N, tk.S))
 
         self.update_idletasks()
         self.minsize(frame.winfo_width(), 300)
 
         plant_row = 2
 
-        for plant in plant_state.values():
-            name_label = ttk.Label(frame, text=plant.get("name"))
+        for plant in plants.values():
+            name_label = ttk.Label(frame, text=plant.name.get())
             name_label.grid(column=name_column, row=plant_row)
 
-            planted_label = ttk.Label(frame, text=plant.get("planted"))
+            planted_label = ttk.Label(frame, text=plant.planted.get())
             planted_label.grid(column=planted_column, row=plant_row)
 
             plant_row += 1
