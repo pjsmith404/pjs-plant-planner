@@ -271,6 +271,12 @@ class Plant:
     def plant_dlg(self, *args):
         dlg = tk.Toplevel()
 
+        ptr_offset = 10
+        ptr_x = dlg.winfo_pointerx() + ptr_offset
+        ptr_y = dlg.winfo_pointery() + ptr_offset
+
+        dlg.geometry(f"+{ptr_x}+{ptr_y}")
+
         ttk.Label(dlg, text="Name:").grid()
         name_entry = ttk.Entry(dlg, textvariable=self.name)
         name_entry.grid()
